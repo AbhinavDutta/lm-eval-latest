@@ -38,6 +38,7 @@ def simple_evaluate(
     write_out: bool = False,
     log_samples: bool = True,
     gen_kwargs: str = None,
+    file_name: str = None,
 ):
     """Instantiate and evaluate a model on a list of tasks.
 
@@ -160,6 +161,7 @@ def simple_evaluate(
         decontamination_ngrams_path=decontamination_ngrams_path,
         write_out=write_out,
         log_samples=log_samples,
+        file_name=file_name,
     )
 
     if lm.rank == 0:
@@ -202,6 +204,7 @@ def evaluate(
     decontamination_ngrams_path=None,
     write_out: bool = False,
     log_samples: bool = True,
+    file_name: str = None,
 ):
     """Instantiate and evaluate a model on a list of tasks.
 
@@ -594,7 +597,10 @@ def evaluate(
                     groups_agg = {**groups_agg, **_groups_agg}
 
             return results_agg, groups_agg
-
+        
+        import json
+        with open("/mnt/azure_data/eval_outputs/mmlu/jsonlogs/slicegpt/"+file_name+"_write_out_info.json","w",encoding="utf8",) as fp:
+            json.dump(samples, fp, indent=4, ensure_ascii=False)
         results_agg = collections.defaultdict(dict)
         groups_agg = collections.defaultdict(dict)
         all_tasks_list = list(task_hierarchy.keys())
